@@ -11,8 +11,6 @@ module.exports = {
   },
   globals: {
     TOUT: false,
-    __SDK_VERSION__: '__SDK_VERSION__',
-    __PLAYER_VERSION__: '__PLAYER_VERSION__',
   },
   rules: {
     //
