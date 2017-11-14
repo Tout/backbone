@@ -15,6 +15,9 @@ const _isEqual = require('lodash/isEqual');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
 const _isString = require('lodash/isString');
+const _isEmpty = require('lodash/isEmpty');
+const _isArray = require('lodash/isArray');
+const _isRegExp = require('lodash/isRegExp');
 const _pick = require('lodash/pick');
 const _reduceRight = require('lodash/reduceRight');
 const _find = require('lodash/find');
@@ -41,7 +44,6 @@ const _difference = require('lodash/difference');
 const _indexOf = require('lodash/indexOf');
 const _shuffle = require('lodash/shuffle');
 const _lastIndexOf = require('lodash/lastIndexOf');
-const _isEmpty = require('lodash/isEmpty');
 const _chain = require('lodash/chain');
 const _sample = require('lodash/sample');
 const _partition = require('lodash/partition');
@@ -50,15 +52,15 @@ const _countBy = require('lodash/countBy');
 const _sortBy = require('lodash/sortBy');
 const _findIndex = require('lodash/findIndex');
 const _findLastIndex = require('lodash/findLastIndex');
+const _once = require('lodash/once');
+const _defer = require('lodash/defer');
+const _escape = require('lodash/escape');
+const _iteratee = require('lodash/iteratee');
+const _matches = require('lodash/matches');
 
 //     Backbone.js 1.5.0
 //     Fork by Chris Richards for Tout.
 //     This Fork is designed to make the transition off Backbone easier for Tout.
-//     (c) 2010-2017 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://backbonejs.org
-console.log('Backbone Tout');
 let Backbone = {};
 
   // Initial Setup
@@ -240,7 +242,7 @@ let Backbone = {};
       listening.obj.off(name, callback, this);
       if (listening.interop) listening.off(name, callback);
     }
-    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
+    if (_isEmpty(listeningTo)) this._listeningTo = void 0;
 
     return this;
   };
@@ -317,7 +319,7 @@ let Backbone = {};
   // `offer` unbinds the `onceWrapper` after it has been called.
   var onceMap = function(map, name, callback, offer) {
     if (callback) {
-      var once = map[name] = _.once(function() {
+      var once = map[name] = _once(function() {
         offer(name, once);
         callback.apply(this, arguments);
       });
@@ -424,7 +426,6 @@ let Backbone = {};
   // Create a new model with the specified attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
-    console.log('Create Backbone.Model', arguments);
     var attrs = attributes || {};
     options || (options = {});
     this.preinitialize.apply(this, arguments);
@@ -482,7 +483,7 @@ let Backbone = {};
 
     // Get the HTML-escaped value of an attribute.
     escape: function(attr) {
-      return _.escape(this.get(attr));
+      return _escape(this.get(attr));
     },
 
     // Returns `true` if the attribute contains a value that is not null
@@ -491,9 +492,9 @@ let Backbone = {};
       return this.get(attr) != null;
     },
 
-    // Special-cased proxy to underscore's `_.matches` method.
+    // Special-cased proxy to underscore's `_matches` method.
     matches: function(attrs) {
-      return !!_.iteratee(attrs, this)(this.attributes);
+      return !!_iteratee(attrs, this)(this.attributes);
     },
 
     // Set a hash of model attributes on the object, firing `"change"`. This is
@@ -586,7 +587,7 @@ let Backbone = {};
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
+      if (attr == null) return !_isEmpty(this.changed);
       return _has(this.changed, attr);
     },
 
@@ -715,7 +716,7 @@ let Backbone = {};
 
       var xhr = false;
       if (this.isNew()) {
-        _.defer(options.success);
+        _defer(options.success);
       } else {
         wrapError(this, options);
         xhr = this.sync('delete', this, options);
@@ -846,7 +847,7 @@ let Backbone = {};
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
       options = _extend({}, options);
-      var singular = !_.isArray(models);
+      var singular = !_isArray(models);
       models = singular ? [models] : models.slice();
       var removed = this._removeModels(models, options);
       if (!options.silent && removed.length) {
@@ -868,7 +869,7 @@ let Backbone = {};
         models = this.parse(models, options) || [];
       }
 
-      var singular = !_.isArray(models);
+      var singular = !_isArray(models);
       models = singular ? [models] : models.slice();
 
       var at = options.at;
@@ -938,7 +939,7 @@ let Backbone = {};
       var orderChanged = false;
       var replace = !sortable && add && remove;
       if (set.length && replace) {
-        orderChanged = this.length !== set.length || _.some(this.models, function(m, index) {
+        orderChanged = this.length !== set.length || _some(this.models, function(m, index) {
           return m !== set[index];
         });
         this.models.length = 0;
@@ -1521,7 +1522,7 @@ let Backbone = {};
     return iteratee;
   };
   var modelMatcher = function(attrs) {
-    var matcher = _.matches(attrs);
+    var matcher = _matches(attrs);
     return function(model) {
       return matcher(model.attributes);
     };
@@ -1748,7 +1749,7 @@ let Backbone = {};
     //     });
     //
     route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (!_isRegExp(route)) route = this._routeToRegExp(route);
       if (_isFunction(name)) {
         callback = name;
         name = '';
@@ -1807,7 +1808,7 @@ let Backbone = {};
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param, i) {
+      return _map(params, function(param, i) {
         // Don't decode the search params.
         if (i === params.length - 1) return param || null;
         return param ? decodeURIComponent(param) : null;
@@ -2038,7 +2039,7 @@ let Backbone = {};
       // If the root doesn't match, no routes can match either.
       if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
-      return _.some(this.handlers, function(handler) {
+      return _some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
