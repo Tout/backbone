@@ -37,8 +37,8 @@ module.exports = {
     'dot-notation': [2, {'allowPattern': '^[a-z0-9]+(_[a-z0-9]+)+$'}],
     // require the use of === and !== except when checking null/undefined.
     eqeqeq: [2, 'smart'],
-    // make sure for-in loops have an if statement
-    'guard-for-in': 2,
+    // don't make sure for-in loops have an if statement
+    'guard-for-in': 0,
     // disallow alert/confirm/prompt
     'no-alert': 2,
     // disallow use of arguments.caller or arguments.callee
@@ -49,8 +49,8 @@ module.exports = {
     'no-div-regex': 2,
     // disallow else after a return in an if statement
     'no-else-return': 2,
-    // disallow empty functions.
-    'no-empty-function': 2,
+    // allow empty functions.
+    'no-empty-function': 0,
     // disallow empty destructuring patterns
     'no-empty-pattern': 2,
     // allow comparisons to null without a type-checking operator
@@ -73,8 +73,8 @@ module.exports = {
     'no-implicit-globals': 2,
     // disallow use of eval()-like methods
     'no-implied-eval': 2,
-    // disallow this keywords outside of classes or class-like objects
-    'no-invalid-this': 2,
+    // backbone makes heavy use of apply and call. let functions use this
+    'no-invalid-this': 0,
     // disallow usage of __iterator__ property
     'no-iterator': 2,
     // disallow use of labels for anything other then loops and switches
