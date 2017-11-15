@@ -8,63 +8,63 @@ const _defaults = require('lodash/defaults');
 const _keys = require('lodash/keys');
 const _clone = require('lodash/clone');
 const _each = require('lodash/each');
-const _map = require('lodash/map');
+// const _map = require('lodash/map');
 const _bind = require('lodash/bind');
-const _reduce = require('lodash/reduce');
+// const _reduce = require('lodash/reduce');
 const _isEqual = require('lodash/isEqual');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
 const _isString = require('lodash/isString');
 const _isEmpty = require('lodash/isEmpty');
-const _isArray = require('lodash/isArray');
-const _isRegExp = require('lodash/isRegExp');
 const _pick = require('lodash/pick');
-const _reduceRight = require('lodash/reduceRight');
-const _find = require('lodash/find');
-const _filter = require('lodash/filter');
-const _reject = require('lodash/reject');
-const _every = require('lodash/every');
-const _some = require('lodash/some');
-const _includes = require('lodash/includes');
-const _invoke = require('lodash/invoke');
-const _max = require('lodash/max');
-const _min = require('lodash/min');
-const _toArray = require('lodash/toArray');
-const _size = require('lodash/size');
-const _first = require('lodash/first');
-const _head = require('lodash/head');
-const _take = require('lodash/take');
-const _initial = require('lodash/initial');
-const _rest = require('lodash/rest');
-const _tail = require('lodash/tail');
-const _drop = require('lodash/drop');
-const _last = require('lodash/last');
-const _without = require('lodash/without');
-const _difference = require('lodash/difference');
-const _indexOf = require('lodash/indexOf');
-const _shuffle = require('lodash/shuffle');
-const _lastIndexOf = require('lodash/lastIndexOf');
-const _chain = require('lodash/chain');
-const _sample = require('lodash/sample');
-const _partition = require('lodash/partition');
-const _groupBy = require('lodash/groupBy');
-const _countBy = require('lodash/countBy');
-const _sortBy = require('lodash/sortBy');
-const _findIndex = require('lodash/findIndex');
-const _findLastIndex = require('lodash/findLastIndex');
+// const _reduceRight = require('lodash/reduceRight');
+// const _find = require('lodash/find');
+// const _filter = require('lodash/filter');
+// const _reject = require('lodash/reject');
+// const _every = require('lodash/every');
+// const _some = require('lodash/some');
+// const _includes = require('lodash/includes');
+// const _invoke = require('lodash/invoke');
+// const _max = require('lodash/max');
+// const _min = require('lodash/min');
+// const _toArray = require('lodash/toArray');
+// const _size = require('lodash/size');
+// const _first = require('lodash/first');
+// const _head = require('lodash/head');
+// const _take = require('lodash/take');
+// const _initial = require('lodash/initial');
+// const _rest = require('lodash/rest');
+// const _tail = require('lodash/tail');
+// const _drop = require('lodash/drop');
+// const _last = require('lodash/last');
+// const _without = require('lodash/without');
+// const _difference = require('lodash/difference');
+// const _indexOf = require('lodash/indexOf');
+// const _shuffle = require('lodash/shuffle');
+// const _lastIndexOf = require('lodash/lastIndexOf');
+// const _chain = require('lodash/chain');
+// const _sample = require('lodash/sample');
+// const _partition = require('lodash/partition');
+// const _groupBy = require('lodash/groupBy');
+// const _countBy = require('lodash/countBy');
+// const _sortBy = require('lodash/sortBy');
+// const _findIndex = require('lodash/findIndex');
+// const _findLastIndex = require('lodash/findLastIndex');
 const _once = require('lodash/once');
 // const _defer = require('lodash/defer');
 const _escape = require('lodash/escape');
 const _iteratee = require('lodash/iteratee');
 const _matches = require('lodash/matches');
-
+const _values = require('lodash/values');
+const _invert = require('lodash/invert');
+const _omit = require('lodash/omit');
 
 // This "enum" defines the three possible kinds of values which can be emitted
 // by a CollectionIterator that correspond to the values(), keys() and entries()
 // methods on Collection, respectively.
-const ITERATOR_VALUES = 1;
-const ITERATOR_KEYS = 2;
-const ITERATOR_KEYSVALUES = 3;
+// const ITERATOR_VALUES = 1;
+// const ITERATOR_KEYS = 2;
+// const ITERATOR_KEYSVALUES = 3;
 
 // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 // const methodMap = {
@@ -1576,18 +1576,18 @@ function modelMatcher(attrs) {
 // Underscore methods that we want to implement on the Collection.
 // 90% of the core usefulness of Backbone Collections is actually implemented
 // right here:
-var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
-  foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
-  select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
-  contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
-  head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
-  without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
-  isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
-  sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
+// var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
+//   foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
+//   select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+//   contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+//   head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+//   without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+//   isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+//   sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
 
 
-  // Underscore methods that we want to implement on the Model, mapped to the
-  // number of arguments they take.
+// Underscore methods that we want to implement on the Model, mapped to the
+// number of arguments they take.
 var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
   omit: 0, chain: 1, isEmpty: 1};
 
@@ -1611,55 +1611,63 @@ _each([
 
   // Give backbone the lodash methods it wants to add
   addUnderscoreMethods(Base, {
-    forEach: _each,
-    each: _each,
-    map: _map,
+    keys: _keys,
+    values: _values,
+    // pairs: _pairs,
+    invert: _invert,
+    pick: _pick,
+    omit: _omit,
+    // chain: _chain,
+    isEmpty: _isEmpty,
+    // forEach: _each,
+    // each: _each,
+    // map: _map,
     // collect: _collect,
-    reduce: _reduce,
+    // reduce: _reduce,
     // foldl: _foldl,
     // inject: _inject,
-    reduceRight: _reduceRight,
+    // reduceRight: _reduceRight,
     // foldr: _foldr,
-    find: _find,
+    // find: _find,
     // detect: _detect,
-    filter: _filter,
+    // filter: _filter,
     // select: _select,
-    reject: _reject,
-    every: _every,
+    // reject: _reject,
+    // every: _every,
     // all: _all,
-    some: _some,
+    // some: _some,
     // any: _any,
     // include: _include,
-    includes: _includes,
+    // includes: _includes,
     // contains: _contains,
-    invoke: _invoke,
-    max: _max,
-    min: _min,
-    toArray: _toArray,
-    size: _size,
-    first: _first,
-    head: _head,
-    take: _take,
-    initial: _initial,
-    rest: _rest,
-    tail: _tail,
-    drop: _drop,
-    last: _last,
-    without: _without,
-    difference: _difference,
-    indexOf: _indexOf,
-    shuffle: _shuffle,
-    lastIndexOf: _lastIndexOf,
-    isEmpty: _isEmpty,
-    chain: _chain,
-    sample: _sample,
-    partition: _partition,
-    groupBy: _groupBy,
-    countBy: _countBy,
-    sortBy: _sortBy,
-    // indexBy: _indexBy,
-    findIndex: _findIndex,
-    findLastIndex: _findLastIndex,
+    // invoke: _invoke,
+    // max: _max,
+    // min: _min,
+    // toArray: _toArray,
+    // size: _size,
+    // first: _first,
+    // head: _head,
+    // take: _take,
+    // initial: _initial,
+    // rest: _rest,
+    // tail: _tail,
+    // drop: _drop,
+    // last: _last,
+    // without: _without,
+    // difference: _difference,
+    // indexOf: _indexOf,
+    // shuffle: _shuffle,
+    // lastIndexOf: _lastIndexOf,
+    // isEmpty: _isEmpty,
+    // chain: _chain,
+    // sample: _sample,
+    // partition: _partition,
+    // groupBy: _groupBy,
+    // countBy: _countBy,
+    // sortBy: _sortBy,
+    // // indexBy: _indexBy,
+    // findIndex: _findIndex,
+    // findLastIndex: _findLastIndex,
   }, methods, attribute);
 });
 
@@ -2218,12 +2226,12 @@ Model.extend = View.extend = extend;
 // }
 
 // Wrap an optional error callback with a fallback error event.
-function wrapError(model, options) {
-  var error = options.error;
-  options.error = function(resp) {
-    if (error) { error.call(options.context, model, resp, options); }
-    model.trigger('error', model, resp, options);
-  };
-}
+// function wrapError(model, options) {
+//   var error = options.error;
+//   options.error = function(resp) {
+//     if (error) { error.call(options.context, model, resp, options); }
+//     model.trigger('error', model, resp, options);
+//   };
+// }
 
 module.exports = Backbone;
