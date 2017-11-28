@@ -1,4 +1,3 @@
-// const $ = require('jquery');
 const _extend = require('lodash/assignIn');
 const _has = require('lodash/has');
 const _create = require('lodash/create');
@@ -23,33 +22,18 @@ const _values = require('lodash/values');
 const _invert = require('lodash/invert');
 const _omit = require('lodash/omit');
 
-//     Backbone.js 1.5.0
+//     Backbone.js 1.5.1
 //     Fork by Chris Richards for Tout.
 //     This Fork is designed to make the transition off Backbone easier for Tout.
 let Backbone = {};
 // Current version of the library. Keep in sync with `package.json`.
-Backbone.VERSION = '1.5.0';
+Backbone.VERSION = '1.5.1';
 
 // Initial Setup
 // -------------
 // Create a local reference to a common array method we'll want to use later.
 var slice = Array.prototype.slice;
 
-
-// For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
-// the `$` variable.
-// Backbone.$ = $;
-
-// Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
-// will fake `"PATCH"`, `"PUT"` and `"DELETE"` requests via the `_method` parameter and
-// set a `X-Http-Method-Override` header.
-// Backbone.emulateHTTP = false;
-
-// Turn on `emulateJSON` to support legacy servers that can't deal with direct
-// `application/json` requests ... this will encode the body as
-// `application/x-www-form-urlencoded` instead and will send the model in a
-// form param named `model`.
-// Backbone.emulateJSON = false;
 
 // Backbone.Events
 // ---------------
@@ -121,6 +105,7 @@ Events.on = function(name, callback, context) {
 // an event in another object... keeping track of what it's listening to
 // for easier unbinding later.
 Events.listenTo = function(obj, name, callback) {
+  console.warn('BACKBONE.listenTo found');
   if (!obj) { return this; }
   var id = obj._listenId || (obj._listenId = _uniqueId('l'));
   var listeningTo = this._listeningTo || (this._listeningTo = {});
@@ -746,178 +731,6 @@ _extend(Model.prototype, Events, {
 });
 
 
-// Backbone.View
-// -------------
-
-// Backbone Views are almost more convention than they are actual code. A View
-// is simply a JavaScript object that represents a logical chunk of UI in the
-// DOM. This might be a single item, an entire list, a sidebar or panel, or
-// even the surrounding frame which wraps your whole app. Defining a chunk of
-// UI as a **View** allows you to define your DOM events declaratively, without
-// having to worry about render order ... and makes it easy for the view to
-// react to specific changes in the state of your models.
-
-// List of view options to be set as properties.
-// const viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
-//
-// // Creating a Backbone.View creates its initial element outside of the DOM,
-// // if an existing element is not provided...
-// var View = Backbone.View = function(options) {
-//   this.cid = _uniqueId('view');
-//   // this.preinitialize.apply(this, arguments);
-//   _extend(this, _pick(options, viewOptions));
-//   this._ensureElement();
-//   this.initialize.apply(this, arguments);
-// };
-//
-//   // Cached regex to split keys for `delegate`.
-// var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-//
-//
-// // Set up all inheritable **Backbone.View** properties and methods.
-// _extend(View.prototype, Events, {
-//
-//   // The default `tagName` of a View's element is `"div"`.
-//   tagName: 'div',
-//
-//   // jQuery delegate for element lookup, scoped to DOM elements within the
-//   // current view. This should be preferred to global lookups where possible.
-//   $: function(selector) {
-//     return this.$el.find(selector);
-//   },
-//
-//   // preinitialize is an empty function by default. You can override it with a function
-//   // or object.  preinitialize will run before any instantiation logic is run in the View
-//   // preinitialize: function(){},
-//
-//   // Initialize is an empty function by default. Override it with your own
-//   // initialization logic.
-//   initialize: function(){},
-//
-//   // **render** is the core function that your view should override, in order
-//   // to populate its element (`this.el`), with the appropriate HTML. The
-//   // convention is for **render** to always return `this`.
-//   render: function() {
-//     return this;
-//   },
-//
-//   // Remove this view by taking the element out of the DOM, and removing any
-//   // applicable Backbone.Events listeners.
-//   remove: function() {
-//     this._removeElement();
-//     this.stopListening();
-//     return this;
-//   },
-//
-//   // Remove this view's element from the document and all event listeners
-//   // attached to it. Exposed for subclasses using an alternative DOM
-//   // manipulation API.
-//   _removeElement: function() {
-//     this.$el.remove();
-//   },
-//
-//   // Change the view's element (`this.el` property) and re-delegate the
-//   // view's events on the new element.
-//   setElement: function(element) {
-//     this.undelegateEvents();
-//     this._setElement(element);
-//     this.delegateEvents();
-//     return this;
-//   },
-//
-//   // Creates the `this.el` and `this.$el` references for this view using the
-//   // given `el`. `el` can be a CSS selector or an HTML string, a jQuery
-//   // context or an element. Subclasses can override this to utilize an
-//   // alternative DOM manipulation API and are only required to set the
-//   // `this.el` property.
-//   _setElement: function(el) {
-//     this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-//     this.el = this.$el[0];
-//   },
-//
-//   // Set callbacks, where `this.events` is a hash of
-//   //
-//   // *{"event selector": "callback"}*
-//   //
-//   //     {
-//   //       'mousedown .title':  'edit',
-//   //       'click .button':     'save',
-//   //       'click .open':       function(e) { ... }
-//   //     }
-//   //
-//   // pairs. Callbacks will be bound to the view, with `this` set properly.
-//   // Uses event delegation for efficiency.
-//   // Omitting the selector binds the event to `this.el`.
-//   delegateEvents: function(events) {
-//     if (!events) {
-//       events = _result(this, 'events');
-//     }
-//     if (!events) { return this; }
-//     this.undelegateEvents();
-//     for (var key in events) {
-//       var method = events[key];
-//       if (!_isFunction(method)) { method = this[method]; }
-//       if (!method) { continue; }
-//       var match = key.match(delegateEventSplitter);
-//       this.delegate(match[1], match[2], _bind(method, this));
-//     }
-//     return this;
-//   },
-//
-//   // Add a single event listener to the view's element (or a child element
-//   // using `selector`). This only works for delegate-able events: not `focus`,
-//   // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
-//   delegate: function(eventName, selector, listener) {
-//     this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
-//     return this;
-//   },
-//
-//   // Clears all callbacks previously bound to the view by `delegateEvents`.
-//   // You usually don't need to use this, but may wish to if you have multiple
-//   // Backbone views attached to the same DOM element.
-//   undelegateEvents: function() {
-//     if (this.$el) { this.$el.off('.delegateEvents' + this.cid); }
-//     return this;
-//   },
-//
-//   // A finer-grained `undelegateEvents` for removing a single delegated event.
-//   // `selector` and `listener` are both optional.
-//   undelegate: function(eventName, selector, listener) {
-//     this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
-//     return this;
-//   },
-//
-//   // Produces a DOM element to be assigned to your view. Exposed for
-//   // subclasses using an alternative DOM manipulation API.
-//   _createElement: function(tagName) {
-//     return document.createElement(tagName);
-//   },
-//
-//   // Ensure that the View has a DOM element to render into.
-//   // If `this.el` is a string, pass it through `$()`, take the first
-//   // matching element, and re-assign it to `el`. Otherwise, create
-//   // an element from the `id`, `className` and `tagName` properties.
-//   _ensureElement: function() {
-//     if (!this.el) {
-//       var attrs = _extend({}, _result(this, 'attributes'));
-//       if (this.id) { attrs.id = _result(this, 'id'); }
-//       if (this.className) { attrs.class = _result(this, 'className'); }
-//       this.setElement(this._createElement(_result(this, 'tagName')));
-//       this._setAttributes(attrs);
-//     }
-//     else {
-//       this.setElement(_result(this, 'el'));
-//     }
-//   },
-//
-//   // Set attributes from a hash on this view's element.  Exposed for
-//   // subclasses using an alternative DOM manipulation API.
-//   _setAttributes: function(attributes) {
-//     this.$el.attr(attributes);
-//   },
-//
-// });
-
 // Proxy Backbone class methods to Underscore functions, wrapping the model's
 // `attributes` object or collection's `models` array behind the scenes.
 //
@@ -969,19 +782,6 @@ function modelMatcher(attrs) {
   };
 }
 
-// Underscore methods that we want to implement on the Collection.
-// 90% of the core usefulness of Backbone Collections is actually implemented
-// right here:
-// var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
-//   foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
-//   select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
-//   contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
-//   head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
-//   without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
-//   isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
-//   sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
-
-
 // Underscore methods that we want to implement on the Model, mapped to the
 // number of arguments they take.
 var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
@@ -997,81 +797,16 @@ _each([
     methods = config[1],
     attribute = config[2];
 
-  // Base.mixin = function(obj) {
-  //   var mappings = _reduce(_.functions(obj), function(memo, name) {
-  //     memo[name] = 0;
-  //     return memo;
-  //   }, {});
-  //   addUnderscoreMethods(Base, obj, mappings, attribute);
-  // };
-
   // Give backbone the lodash methods it wants to add
   addUnderscoreMethods(Base, {
     keys: _keys,
     values: _values,
-    // pairs: _pairs,
     invert: _invert,
     pick: _pick,
     omit: _omit,
-    // chain: _chain,
     isEmpty: _isEmpty,
-    // forEach: _each,
-    // each: _each,
-    // map: _map,
-    // collect: _collect,
-    // reduce: _reduce,
-    // foldl: _foldl,
-    // inject: _inject,
-    // reduceRight: _reduceRight,
-    // foldr: _foldr,
-    // find: _find,
-    // detect: _detect,
-    // filter: _filter,
-    // select: _select,
-    // reject: _reject,
-    // every: _every,
-    // all: _all,
-    // some: _some,
-    // any: _any,
-    // include: _include,
-    // includes: _includes,
-    // contains: _contains,
-    // invoke: _invoke,
-    // max: _max,
-    // min: _min,
-    // toArray: _toArray,
-    // size: _size,
-    // first: _first,
-    // head: _head,
-    // take: _take,
-    // initial: _initial,
-    // rest: _rest,
-    // tail: _tail,
-    // drop: _drop,
-    // last: _last,
-    // without: _without,
-    // difference: _difference,
-    // indexOf: _indexOf,
-    // shuffle: _shuffle,
-    // lastIndexOf: _lastIndexOf,
-    // isEmpty: _isEmpty,
-    // chain: _chain,
-    // sample: _sample,
-    // partition: _partition,
-    // groupBy: _groupBy,
-    // countBy: _countBy,
-    // sortBy: _sortBy,
-    // // indexBy: _indexBy,
-    // findIndex: _findIndex,
-    // findLastIndex: _findLastIndex,
   }, methods, attribute);
 });
-
-// Set the default implementation of `Backbone.ajax` to proxy through to `$`.
-// Override this if you'd like to use a different library.
-// Backbone.ajax = function() {
-//   return Backbone.$.ajax.apply(Backbone.$, arguments);
-// };
 
 // Helpers
 // -------
