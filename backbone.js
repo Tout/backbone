@@ -114,18 +114,6 @@ function onApi(events, name, callback, options) {
   return events;
 }
 
-// An try-catch guarded #on function, to prevent poisoning the global
-// `_listening` variable.
-function tryCatchOn(obj, name, callback, context) {
-  try {
-    obj.on(name, callback, context);
-    return null;
-  }
-  catch (e) {
-    return e;
-  }
-}
-
 // Remove one or many callbacks. If `context` is null, removes all
 // callbacks with that function. If `callback` is null, removes all
 // callbacks for the event. If `name` is null, removes all bound
