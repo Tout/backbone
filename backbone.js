@@ -101,36 +101,6 @@ Events.on = function(name, callback, context) {
   return this;
 };
 
-// Inversion-of-control versions of `on`. Tell *this* object to listen to
-// an event in another object... keeping track of what it's listening to
-// for easier unbinding later.
-Events.listenTo = function(obj, name, callback) {
-  console.warn('BACKBONE.listenTo found');
-  if (!obj) { return this; }
-  var id = obj._listenId || (obj._listenId = _uniqueId('l'));
-  var listeningTo = this._listeningTo || (this._listeningTo = {});
-  var listening = _listening = listeningTo[id];
-
-  // This object is not listening to any other events on `obj` yet.
-  // Setup the necessary references to track the listening callbacks.
-  if (!listening) {
-    if (!this._listenId) {
-      this._listenId = _uniqueId('l');
-    }
-    listening = _listening = listeningTo[id] = new Listening(this, obj);
-  }
-
-  // Bind callbacks on obj.
-  var error = tryCatchOn(obj, name, callback, this);
-  _listening = void 0;
-
-  if (error) { throw error; }
-  // If the target obj is not Backbone.Events, track events manually.
-  if (listening.interop) { listening.on(name, callback); }
-
-  return this;
-};
-
 // The reducing API that adds a callback to the `events` object.
 // var onApi = function(events, name, callback, options) {
 function onApi(events, name, callback, options) {
@@ -166,28 +136,6 @@ Events.off = function(name, callback, context) {
     context: context,
     listeners: this._listeners,
   });
-
-  return this;
-};
-
-// Tell this object to stop listening to either specific events ... or
-// to every object it's currently listening to.
-Events.stopListening = function(obj, name, callback) {
-  var listeningTo = this._listeningTo;
-  if (!listeningTo) { return this; }
-
-  var ids = obj ? [obj._listenId] : _keys(listeningTo);
-  for (var i = 0; i < ids.length; i++) {
-    var listening = listeningTo[ids[i]];
-
-    // If listening doesn't exist, this object is not currently
-    // listening to obj. Break out early.
-    if (!listening) { break; }
-
-    listening.obj.off(name, callback, this);
-    if (listening.interop) { listening.off(name, callback); }
-  }
-  if (_isEmpty(listeningTo)) { this._listeningTo = void 0; }
 
   return this;
 };
