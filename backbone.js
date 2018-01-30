@@ -8,7 +8,7 @@ const _keys = require('lodash/keys');
 const _clone = require('lodash/clone');
 const _each = require('lodash/each');
 const _bind = require('lodash/bind');
-const _isEqual = require('lodash/isEqual');
+// const _isEqual = require('lodash/isEqual');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
 const _isString = require('lodash/isString');
@@ -424,8 +424,10 @@ _extend(Model.prototype, Events, {
     // For each `set` attribute, update or delete the current value.
     for (var attr in attrs) {
       val = attrs[attr];
-      if (!_isEqual(current[attr], val)) { changes.push(attr); }
-      if (!_isEqual(prev[attr], val)) {
+      if (current[attr] !== val) { changes.push(attr); }
+      // if (!_isEqual(current[attr], val)) { changes.push(attr); }
+      if (prev[attr] !== val) {
+      // if (!_isEqual(prev[attr], val)) {
         changed[attr] = val;
       }
       else {
@@ -499,7 +501,8 @@ _extend(Model.prototype, Events, {
     var hasChanged;
     for (var attr in diff) {
       var val = diff[attr];
-      if (_isEqual(old[attr], val)) { continue; }
+      if (old[attr] === val) { continue; }
+      // if (_isEqual(old[attr], val)) { continue; }
       changed[attr] = val;
       hasChanged = true;
     }
