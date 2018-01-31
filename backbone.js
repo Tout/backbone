@@ -12,7 +12,7 @@ const _bind = require('lodash/bind');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
 const _isString = require('lodash/isString');
-const _isEmpty = require('lodash/isEmpty');
+// const _isEmpty = require('lodash/isEmpty');
 const _pick = require('lodash/pick');
 const _once = require('lodash/once');
 const _escape = require('lodash/escape');
@@ -484,7 +484,8 @@ _extend(Model.prototype, Events, {
   // Determine if the model has changed since the last `"change"` event.
   // If you specify an attribute name, determine if that attribute has changed.
   hasChanged: function(attr) {
-    if (attr == null) { return !_isEmpty(this.changed); }
+    // if (attr == null) { return !_isEmpty(this.changed); }
+    if (attr == null) { return Object.keys(this.changed).length > 0; }
     return _has(this.changed, attr);
   },
 
@@ -724,7 +725,7 @@ function modelMatcher(attrs) {
 // Underscore methods that we want to implement on the Model, mapped to the
 // number of arguments they take.
 var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
-  omit: 0, chain: 1, isEmpty: 1};
+  omit: 0, chain: 1/*, isEmpty: 1*/};
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
 
@@ -743,7 +744,7 @@ _each([
     invert: _invert,
     pick: _pick,
     omit: _omit,
-    isEmpty: _isEmpty,
+    // isEmpty: _isEmpty,
   }, methods, attribute);
 });
 
