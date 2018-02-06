@@ -7,12 +7,9 @@ const _defaults = require('lodash/defaults');
 const _keys = require('lodash/keys');
 const _clone = require('lodash/clone');
 const _each = require('lodash/each');
-const _bind = require('lodash/bind');
-// const _isEqual = require('lodash/isEqual');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
 const _isString = require('lodash/isString');
-// const _isEmpty = require('lodash/isEmpty');
 const _pick = require('lodash/pick');
 const _once = require('lodash/once');
 const _escape = require('lodash/escape');
@@ -186,7 +183,7 @@ function offApi(events, name, callback, options) {
 // once for each event, not once for a combination of all events.
 Events.once = function(name, callback, context) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback, _bind(this.off, this));
+  var events = eventsApi(onceMap, {}, name, callback, this.off.bind(this));
   if (typeof name === 'string' && context == null) { callback = void 0; }
   return this.on(events, callback, context);
 };
@@ -194,7 +191,7 @@ Events.once = function(name, callback, context) {
 // Inversion-of-control versions of `once`.
 Events.listenToOnce = function(obj, name, callback) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback, _bind(this.stopListening, this, obj));
+  var events = eventsApi(onceMap, {}, name, callback, this.stopListening.bind(this, obj));
   return this.listenTo(obj, events);
 };
 
