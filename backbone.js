@@ -13,7 +13,6 @@ const _isString = require('lodash/isString');
 const _pick = require('lodash/pick');
 const _once = require('lodash/once');
 const _escape = require('lodash/escape');
-const _iteratee = require('lodash/iteratee');
 const _matches = require('lodash/matches');
 const _values = require('lodash/values');
 const _invert = require('lodash/invert');
@@ -375,9 +374,9 @@ _extend(Model.prototype, Events, {
   },
 
   // Special-cased proxy to underscore's `_matches` method.
-  matches: function(attrs) {
-    return !!_iteratee(attrs, this)(this.attributes);
-  },
+  // matches: function(attrs) {
+  //   return !!_iteratee(attrs, this)(this.attributes);
+  // },
 
   // Set a hash of model attributes on the object, firing `"change"`. This is
   // the core primitive operation of a model, updating the data and notifying
