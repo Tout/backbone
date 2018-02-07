@@ -5,7 +5,7 @@ const _uniqueId = require('lodash/uniqueId');
 const _result = require('lodash/result');
 const _defaults = require('lodash/defaults');
 const _keys = require('lodash/keys');
-const _clone = require('lodash/clone');
+// const _clone = require('lodash/clone');
 const _each = require('lodash/each');
 const _isFunction = require('lodash/isFunction');
 const _isObject = require('lodash/isObject');
@@ -13,10 +13,15 @@ const _isString = require('lodash/isString');
 const _pick = require('lodash/pick');
 const _once = require('lodash/once');
 const _escape = require('lodash/escape');
-const _matches = require('lodash/matches');
+// const _matches = require('lodash/matches');
 const _values = require('lodash/values');
 const _invert = require('lodash/invert');
-const _omit = require('lodash/omit');
+// const _omit = require('lodash/omit');
+
+// fast shallow clone
+function _clone(obj) {
+  return Object.assign({}, obj);
+}
 
 //     Backbone.js 1.5.1
 //     Fork by Chris Richards for Tout.
@@ -705,23 +710,23 @@ var addUnderscoreMethods = function(Class, base, methods, attribute) {
 };
 
 // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
-function cb(iteratee, instance) {
-  if (_isFunction(iteratee)) { return iteratee; }
-  if (_isObject(iteratee) && !instance._isModel(iteratee)) { return modelMatcher(iteratee); }
-  if (_isString(iteratee)) { return function(model) { return model.get(iteratee); }; }
-  return iteratee;
-}
-function modelMatcher(attrs) {
-  var matcher = _matches(attrs);
-  return function(model) {
-    return matcher(model.attributes);
-  };
-}
+// function cb(iteratee, instance) {
+//   if (_isFunction(iteratee)) { return iteratee; }
+//   if (_isObject(iteratee) && !instance._isModel(iteratee)) { return modelMatcher(iteratee); }
+//   if (_isString(iteratee)) { return function(model) { return model.get(iteratee); }; }
+//   return iteratee;
+// }
+// function modelMatcher(attrs) {
+//   var matcher = _matches(attrs);
+//   return function(model) {
+//     return matcher(model.attributes);
+//   };
+// }
 
 // Underscore methods that we want to implement on the Model, mapped to the
 // number of arguments they take.
 var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
-  omit: 0, chain: 1/*, isEmpty: 1*/};
+/*omit: 0,*/ chain: 1/*, isEmpty: 1*/};
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
 
@@ -739,7 +744,7 @@ _each([
     values: _values,
     invert: _invert,
     pick: _pick,
-    omit: _omit,
+    // omit: _omit,
     // isEmpty: _isEmpty,
   }, methods, attribute);
 });
