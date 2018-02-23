@@ -466,7 +466,6 @@ _extend(Model.prototype, Events, {
   // Determine if the model has changed since the last `"change"` event.
   // If you specify an attribute name, determine if that attribute has changed.
   hasChanged: function(attr) {
-    // if (attr == null) { return !_isEmpty(this.changed); }
     if (attr == null) { return Object.keys(this.changed).length > 0; }
     return _has(this.changed, attr);
   },
