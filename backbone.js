@@ -5,25 +5,15 @@ const _uniqueId = require('lodash/uniqueId');
 const _result = require('lodash/result');
 const _defaults = require('lodash/defaults');
 const _keys = require('lodash/keys');
-// const _clone = require('lodash/clone');
-const _each = require('lodash/each');
-const _isFunction = require('lodash/isFunction');
-const _isObject = require('lodash/isObject');
-const _isString = require('lodash/isString');
-const _pick = require('lodash/pick');
 const _once = require('lodash/once');
 const _escape = require('lodash/escape');
-// const _matches = require('lodash/matches');
-const _values = require('lodash/values');
-const _invert = require('lodash/invert');
-// const _omit = require('lodash/omit');
 
 // fast shallow clone
 function _clone(obj) {
   return Object.assign({}, obj);
 }
 
-//     Backbone.js 1.5.1
+//     Backbone.js 1.5.2
 //     Fork by Chris Richards for Tout.
 //     This Fork is designed to make the transition off Backbone easier for Tout.
 let Backbone = {};
@@ -32,8 +22,6 @@ Backbone.VERSION = '1.5.1';
 
 // Initial Setup
 // -------------
-// Create a local reference to a common array method we'll want to use later.
-var slice = Array.prototype.slice;
 
 
 // Backbone.Events
@@ -378,11 +366,6 @@ _extend(Model.prototype, Events, {
     return this.get(attr) != null;
   },
 
-  // Special-cased proxy to underscore's `_matches` method.
-  // matches: function(attrs) {
-  //   return !!_iteratee(attrs, this)(this.attributes);
-  // },
-
   // Set a hash of model attributes on the object, firing `"change"`. This is
   // the core primitive operation of a model, updating the data and notifying
   // anyone who needs to know about the change in state. The heart of the beast.
@@ -426,9 +409,7 @@ _extend(Model.prototype, Events, {
     for (var attr in attrs) {
       val = attrs[attr];
       if (current[attr] !== val) { changes.push(attr); }
-      // if (!_isEqual(current[attr], val)) { changes.push(attr); }
       if (prev[attr] !== val) {
-      // if (!_isEqual(prev[attr], val)) {
         changed[attr] = val;
       }
       else {
@@ -504,7 +485,6 @@ _extend(Model.prototype, Events, {
     for (var attr in diff) {
       var val = diff[attr];
       if (old[attr] === val) { continue; }
-      // if (_isEqual(old[attr], val)) { continue; }
       changed[attr] = val;
       hasChanged = true;
     }
@@ -523,76 +503,6 @@ _extend(Model.prototype, Events, {
   previousAttributes: function() {
     return _clone(this._previousAttributes);
   },
-
-  // Fetch the model from the server, merging the response with the model's
-  // local attributes. Any changed attributes will trigger a "change" event.
-  // fetch: function(options) {
-  //   options = _extend({parse: true}, options);
-  //   var model = this;
-  //   var success = options.success;
-  //   options.success = function(resp) {
-  //     var serverAttrs = options.parse ? model.parse(resp, options) : resp;
-  //     if (!model.set(serverAttrs, options)) return false;
-  //     if (success) success.call(options.context, model, resp, options);
-  //     model.trigger('sync', model, resp, options);
-  //   };
-  //   wrapError(this, options);
-  //   return this.sync('read', this, options);
-  // },
-
-  // Set a hash of model attributes, and sync the model to the server.
-  // If the server returns an attributes hash that differs, the model's
-  // state will be `set` again.
-  // save: function(key, val, options) {
-  //   // Handle both `"key", value` and `{key: value}` -style arguments.
-  //   var attrs;
-  //   if (key == null || typeof key === 'object') {
-  //     attrs = key;
-  //     options = val;
-  //   } else {
-  //     (attrs = {})[key] = val;
-  //   }
-  //
-  //   options = _extend({validate: true, parse: true}, options);
-  //   var wait = options.wait;
-  //
-  //   // If we're not waiting and attributes exist, save acts as
-  //   // `set(attr).save(null, opts)` with validation. Otherwise, check if
-  //   // the model will be valid when the attributes, if any, are set.
-  //   if (attrs && !wait) {
-  //     if (!this.set(attrs, options)) return false;
-  //   } else if (!this._validate(attrs, options)) {
-  //     return false;
-  //   }
-  //
-  //   // After a successful server-side save, the client is (optionally)
-  //   // updated with the server-side state.
-  //   var model = this;
-  //   var success = options.success;
-  //   var attributes = this.attributes;
-  //   options.success = function(resp) {
-  //     // Ensure attributes are restored during synchronous saves.
-  //     model.attributes = attributes;
-  //     var serverAttrs = options.parse ? model.parse(resp, options) : resp;
-  //     if (wait) serverAttrs = _extend({}, attrs, serverAttrs);
-  //     if (serverAttrs && !model.set(serverAttrs, options)) return false;
-  //     if (success) success.call(options.context, model, resp, options);
-  //     model.trigger('sync', model, resp, options);
-  //   };
-  //   wrapError(this, options);
-  //
-  //   // Set temporary attributes if `{wait: true}` to properly find new ids.
-  //   if (attrs && wait) this.attributes = _extend({}, attributes, attrs);
-  //
-  //   var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-  //   if (method === 'patch' && !options.attrs) options.attrs = attrs;
-  //   var xhr = this.sync(method, this, options);
-  //
-  //   // Restore attributes.
-  //   this.attributes = attributes;
-  //
-  //   return xhr;
-  // },
 
   // Destroy this model on the server if it was already persisted.
   // Optimistically removes the model from its collection, if it has one.
@@ -614,35 +524,8 @@ _extend(Model.prototype, Events, {
       if (!model.isNew()) { model.trigger('sync', model, resp, options); }
     };
 
-    // var xhr = false;
-    // if (this.isNew()) {
-    //   _defer(options.success);
-    // } else {
-    //   wrapError(this, options);
-    //   xhr = this.sync('delete', this, options);
-    // }
     if (!wait) { destroy(); }
-    // return xhr;
   },
-
-  // Default URL for the model's representation on the server -- if you're
-  // using Backbone's restful methods, override this to change the endpoint
-  // that will be called.
-  // url: function() {
-  //   var base =
-  //     _result(this, 'urlRoot') ||
-  //     _result(this.collection, 'url') ||
-  //     urlError();
-  //   if (this.isNew()) return base;
-  //   var id = this.get(this.idAttribute);
-  //   return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
-  // },
-
-  // **parse** converts a response into the hash of attributes to be `set` on
-  // the model. The default implementation is just to pass the response along.
-  // parse: function(resp, options) {
-  //   return resp;
-  // },
 
   // Create a new model with identical attributes to this one.
   clone: function() {
@@ -671,83 +554,6 @@ _extend(Model.prototype, Events, {
   },
 });
 
-
-// Proxy Backbone class methods to Underscore functions, wrapping the model's
-// `attributes` object or collection's `models` array behind the scenes.
-//
-// collection.filter(function(model) { return model.get('age') > 10 });
-// collection.each(this.addView);
-//
-// `Function#apply` can be slow so we use the method's arg count, if we know it.
-var addMethod = function(base, length, method, attribute) {
-  switch (length) {
-    case 1: return function() {
-      return base[method](this[attribute]);
-    };
-    case 2: return function(value) {
-      return base[method](this[attribute], value);
-    };
-    case 3: return function(iteratee, context) {
-      return base[method](this[attribute], cb(iteratee, this), context);
-    };
-    case 4: return function(iteratee, defaultVal, context) {
-      return base[method](this[attribute], cb(iteratee, this), defaultVal, context);
-    };
-    default: return function() {
-      var args = slice.call(arguments);
-      args.unshift(this[attribute]);
-      return base[method].apply(base, args);
-    };
-  }
-};
-
-var addUnderscoreMethods = function(Class, base, methods, attribute) {
-  _each(methods, function(length, method) {
-    if (base[method]) {
-      Class.prototype[method] = addMethod(base, length, method, attribute);
-    }
-  });
-};
-
-// Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
-// function cb(iteratee, instance) {
-//   if (_isFunction(iteratee)) { return iteratee; }
-//   if (_isObject(iteratee) && !instance._isModel(iteratee)) { return modelMatcher(iteratee); }
-//   if (_isString(iteratee)) { return function(model) { return model.get(iteratee); }; }
-//   return iteratee;
-// }
-// function modelMatcher(attrs) {
-//   var matcher = _matches(attrs);
-//   return function(model) {
-//     return matcher(model.attributes);
-//   };
-// }
-
-// Underscore methods that we want to implement on the Model, mapped to the
-// number of arguments they take.
-var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
-/*omit: 0,*/ chain: 1/*, isEmpty: 1*/};
-
-  // Mix in each Underscore method as a proxy to `Collection#models`.
-
-_each([
-  // [Collection, collectionMethods, 'models'],
-  [Model, modelMethods, 'attributes'],
-], function(config) {
-  var Base = config[0],
-    methods = config[1],
-    attribute = config[2];
-
-  // Give backbone the lodash methods it wants to add
-  addUnderscoreMethods(Base, {
-    keys: _keys,
-    values: _values,
-    invert: _invert,
-    pick: _pick,
-    // omit: _omit,
-    // isEmpty: _isEmpty,
-  }, methods, attribute);
-});
 
 // Helpers
 // -------
@@ -785,7 +591,5 @@ var extend = function(protoProps, staticProps) {
 };
 
 // Set up inheritance for the model, collection, router, view and history.
-// Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
-// Model.extend = View.extend = extend;
 Model.extend = extend;
 module.exports = Backbone;
